@@ -571,50 +571,42 @@ async def SyncCommands(self: commands.Bot):
         except Exception as e:
             logging.error(e)
     try:
-
-        if not len(Multi) == 0:
-            MultiCommand = app_commands.Command(
-                name="promote",
-                description="Promote a staff member",
-                callback=MultiHireachy,
-                guild_ids=list(Multi),
-            )
+        for gid in Multi:
             try:
                 app_commands.CommandTree.add_command(
                     self.tree,
-                    MultiCommand,
-                    guilds=[discord.Object(id=i) for i in Multi],
+                    app_commands.Command(
+                        name="promote",
+                        description="Promote a staff member",
+                        callback=MultiHireachy,
+                    ),
+                    guild=discord.Object(id=gid),
                 )
             except Exception as e:
                 logging.error(e)
-        if not len(Single) == 0:
-            SingleCommand = app_commands.Command(
-                name="promote",
-                description="Promote a staff member",
-                callback=SingleHierarchy,
-                guild_ids=list(Single),
-            )
+        for gid in Single:
             try:
                 app_commands.CommandTree.add_command(
                     self.tree,
-                    SingleCommand,
-                    guilds=[discord.Object(id=i) for i in Single],
+                    app_commands.Command(
+                        name="promote",
+                        description="Promote a staff member",
+                        callback=SingleHierarchy,
+                    ),
+                    guild=discord.Object(id=gid),
                 )
             except Exception as e:
                 logging.error(e)
-        if not len(TheOG) == 0:
-            GlobalCommand = app_commands.Command(
-                name="promote",
-                description="Promote a staff member",
-                callback=issue,
-                guild_ids=list(TheOG),
-            )
+        for gid in TheOG:
             try:
-
                 app_commands.CommandTree.add_command(
                     self.tree,
-                    GlobalCommand,
-                    guilds=[discord.Object(id=i) for i in TheOG],
+                    app_commands.Command(
+                        name="promote",
+                        description="Promote a staff member",
+                        callback=issue,
+                    ),
+                    guild=discord.Object(id=gid),
                 )
             except Exception as e:
                 logging.error(e)
@@ -953,3 +945,7 @@ class UpdatePromotion(discord.ui.Modal):
 
 async def setup(client: commands.Bot) -> None:
     await client.add_cog(promo(client))
+
+async def setup(client: commands.Bot) -> None:
+    await client.add_cog(promo(client))
+
