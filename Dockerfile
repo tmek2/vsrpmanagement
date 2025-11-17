@@ -1,24 +1,9 @@
-FROM python:3.10.12-slim
-
-RUN apt-get update && apt-get upgrade -y && apt-get install -y \
-    git \
-    ffmpeg \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get install -y \
-    git \
-    ffmpeg \
-    && rm -rf /var/lib/apt/lists/*
-
+FROM python:3.12-slim
 WORKDIR /app
-ENV VIRTUAL_ENV "/venv"
-RUN python -m venv $VIRTUAL_ENV
-ENV PATH "$VIRTUAL_ENV/bin:$PATH"
-
-COPY requirements.txt /app/
-
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . /app/
-
-CMD ["python", "main.py"]
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+COPY requirements.txt .
+RUN pip install -U pip && pip install -r requirements.txt
+COPY . .
+ENV PORT=10000
+CMD ["python","-u","main.py"]
