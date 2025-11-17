@@ -472,7 +472,7 @@ def Options(Config: dict = None):
             label="Welcome",
             description="",
             value="Welcome",
-            emoji=discord.PartialEmoji.from_str("<:waving:1440045743133036767>"),
+            emoji=discord.PartialEmoji.from_str("<:handwave:1440069457371201691>"),
         ),
     ]
 
@@ -533,3 +533,4 @@ class ConfigCog(commands.Cog):
 
 async def setup(client: commands.Bot) -> None:
     await client.add_cog(ConfigCog(client))
+
