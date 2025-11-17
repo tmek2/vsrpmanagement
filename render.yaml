@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: birb-app
+    env: docker
+    plan: starter
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /status
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: PORT
+        value: 7002
+      - key: RENDER_EXTERNAL_URL
+        value: https://YOUR-SERVICE.onrender.com/status
+      - key: TOKEN
+        sync: false
+      - key: MONGO_URL
+        sync: false
+      - key: PREFIX
+        value: "!!"
+
+jobs:
+  - type: cron
+    name: stay-awake
+    env: python
+    schedule: "*/12 * * * *"
+    buildCommand: pip install -U requests
+    startCommand: |
+      python - <<'PY'
+      import os, requests
+      url = os.getenv('RENDER_EXTERNAL_URL', 'http://0.0.0.0:7002/status')
+      try:
+          requests.get(url, timeout=10)
+      except Exception:
+          pass
+      PY
