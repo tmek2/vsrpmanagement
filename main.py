@@ -172,7 +172,6 @@ class Client(commands.AutoShardedBot):
             # Utilities
             "Cogs.Modules.Utilities.extras",
             "Cogs.Modules.Utilities.ping",
-            "Cogs.Modules.Utilities.info",
             
             "Cogs.Modules.Developer.astro",
             # Configuration
