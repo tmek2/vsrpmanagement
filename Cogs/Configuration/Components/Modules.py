@@ -184,7 +184,7 @@ async def ModuleOptions(Config, data=None):
         discord.SelectOption(
             label="Welcome",
             value="Welcome",
-            emoji=discord.PartialEmoji.from_str("<:waving:1440045743133036767>"),
+            emoji=discord.PartialEmoji.from_str("<:handwave:1440069457371201691>"),
             default=(
                 Config.get("Modules", {}).get("Welcome", False) or False
                 if not data
@@ -258,3 +258,4 @@ class ModuleToggle(discord.ui.Select):
             ),
             ephemeral=True,
         )
+
