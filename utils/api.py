@@ -983,7 +983,7 @@ class APICog(commands.Cog):
         )
         host = os.getenv("API_HOST", default_host)
         try:
-            base_port = int(os.getenv("API_PORT", "8000"))
+            base_port = int(os.getenv("PORT", os.getenv("API_PORT", "8000")))
         except ValueError:
             base_port = 8000
 
@@ -1071,3 +1071,4 @@ class APICog(commands.Cog):
 
 async def setup(client: commands.Bot) -> None:
     await client.add_cog(APICog(client))
+
