@@ -91,6 +91,7 @@ class APIRoutes:
                     getattr(self, i),
                     methods=[i.split("_")[0].upper()],
                 )
+        self.router.add_api_route("/", self.GET_root, methods=["GET"])
 
     async def GET_shards(self):
         shards = []
@@ -937,6 +938,9 @@ class APIRoutes:
 
     def GET_status(self):
         return {"status": "Connected", "uptime": self.Uptime.timestamp()}
+    
+    async def GET_root(self):
+        return {"status": "Connected", "uptime": self.Uptime.timestamp()}
         
     def safe_literal_eval(self, item):
         try:
@@ -1028,3 +1032,8 @@ class APICog(commands.Cog):
 
 async def setup(client: commands.Bot) -> None:
     await client.add_cog(APICog(client))
+
+
+async def setup(client: commands.Bot) -> None:
+    await client.add_cog(APICog(client))
+
