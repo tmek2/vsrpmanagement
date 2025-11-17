@@ -131,7 +131,7 @@ else:
     reports = "<:reports:1438995990811115592>"
     application = "<:application:1438995830689235170>"
     reviews = "<:reviews:1438995994476937456>"
-    reset = "<:reset:1439303489778880583>"
+    reset = "<:reset:1438995992660807760>"
     save = "<:save:1438996005424074963>"
     customisation = "<:customisation:1438995868920320000>"
     button = "<:button:1438995847928090765>"
@@ -161,3 +161,4 @@ else:
     lock = "🔒"
     hand = "✋"
     comment = "💬"
+
