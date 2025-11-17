@@ -977,65 +977,22 @@ class APICog(commands.Cog):
         self.server_task = asyncio.create_task(self.start_server())
 
     async def start_server(self):
-        # Resolve host and base port from env, with sensible defaults
-        default_host = (
-            "0.0.0.0" if os.getenv("ENVIRONMENT") == "production" else "127.0.0.1"
-        )
-        host = os.getenv("API_HOST", default_host)
+        host = os.getenv("API_HOST") or "0.0.0.0"
         try:
-            base_port = int(os.getenv("PORT", os.getenv("API_PORT", "8000")))
+            port = int(os.getenv("PORT", os.getenv("API_PORT", "10000")))
         except ValueError:
-            base_port = 8000
+            port = 10000
 
-        def port_available(h: str, p: int) -> bool:
-            # Bind test directly on the intended host to accurately detect conflicts.
-            try:
-                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                    s.bind((h, p))
-                return True
-            except OSError:
-                return False
-
-        # Attempt to bind to an available port, retrying on conflicts
-        # We try up to 20 consecutive ports starting from base_port.
-        for offset in range(0, 20):
-            port = base_port + offset
-            # Skip starting uvicorn if the port is clearly unavailable
-            if not port_available(host, port):
-                print(f"[API] Port {port} unavailable. Trying {base_port + offset + 1}...")
-                continue
-            config = uvicorn.Config(
-                app=self.app,
-                host=host,
-                port=port,
-                log_level="info",
-            )
-            server = uvicorn.Server(config)
-            self._server = server
-            try:
-                print(f"[API] Starting server on {config.host}:{config.port}")
-                await server.serve()
-                # If serve() returns normally, the server was started and later stopped.
-                break
-            except SystemExit as e:
-                # uvicorn exits with SystemExit(1) on bind errors; try next port
-                if getattr(e, "code", 1) == 1:
-                    print(
-                        f"[API] Port {port} unavailable. Trying {base_port + offset + 1}..."
-                    )
-                    continue
-                else:
-                    raise
-            except OSError as e:
-                # In case an OSError bubbles up directly, also try next port
-                print(f"[API] OSError on {port}: {e}. Retrying on next port...")
-                continue
-        else:
-            # If all attempts failed, log and do not crash the bot
-            print(
-                f"[API] Failed to bind after trying ports {base_port}-{base_port + 19}. API will be disabled."
-            )
+        config = uvicorn.Config(
+            app=self.app,
+            host=host,
+            port=port,
+            log_level="info",
+        )
+        server = uvicorn.Server(config)
+        self._server = server
+        print(f"[API] Starting server on {config.host}:{config.port}")
+        await server.serve()
 
     @commands.group()
     async def api(self, ctx):
@@ -1071,4 +1028,3 @@ class APICog(commands.Cog):
 
 async def setup(client: commands.Bot) -> None:
     await client.add_cog(APICog(client))
-
