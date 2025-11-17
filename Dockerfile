@@ -5,5 +5,6 @@ ENV PYTHONUNBUFFERED=1
 COPY requirements.txt .
 RUN pip install -U pip && pip install -r requirements.txt
 COPY . .
-ENV PORT=10000
+ENV PORT=43001
 CMD ["python","-u","main.py"]
+
