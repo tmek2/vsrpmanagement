@@ -290,7 +290,7 @@ class on_infractions(commands.Cog):
                             return None
                         Btyes = await resp.read()
                 try:
-                    hook = await channel.create_webhook(name="Birb", avatar=Btyes)
+                    hook = await channel.create_webhook(name="Vermont State Management", avatar=Btyes)
                     await self.client.db["Webhooks"].update_one(
                         {"Type": "IF", "Channel": channel.id, "Guild": guild.id},
                         {"$set": {"Id": hook.id}},
@@ -318,7 +318,7 @@ class on_infractions(commands.Cog):
                     view=view,
                     allowed_mentions=discord.AllowedMentions(users=True),
                     avatar_url=WS.get("Avatar") or None,
-                    username=WS.get("Username") or "Birb",
+                    username=WS.get("Username") or "Vermont State Management",
                     wait=True,
                 )
             else:
@@ -327,7 +327,7 @@ class on_infractions(commands.Cog):
                     embeds=embeds,
                     allowed_mentions=discord.AllowedMentions(users=True),
                     avatar_url=WS.get("Avatar") or None,
-                    username=WS.get("Username") or "Birb",
+                    username=WS.get("Username") or "Vermont State Management",
                     wait=True,
                 )
 
