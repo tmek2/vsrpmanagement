@@ -82,7 +82,7 @@ class GuildJoins(commands.Cog):
                 if inviter:
                     try:
                         await inviter.send(
-                            f"🎉 Thank you for adding **Astro Birb** to your server. To get started run </config:1140463441136586784>!\n<:ArrowDropDown:1163171628050563153> Guild `#{len(self.client.guilds)}`"
+                            f"🎉 Thank you for adding **Vermont State Management** to your server. To get started run </config:1140463441136586784>!\n<:ArrowDropDown:1163171628050563153> Guild `#{len(self.client.guilds)}`"
                         )
                     except discord.Forbidden:
                         print(
