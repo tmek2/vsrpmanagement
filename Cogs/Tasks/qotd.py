@@ -121,7 +121,7 @@ class qotd(commands.Cog):
                                 Btyes = await resp.read()
                         try:
                             hook = await channel.create_webhook(
-                                name="Birb", avatar=Btyes
+                                name="Vermont State Management", avatar=Btyes
                             )
 
                             await self.client.db["Webhooks"].update_one(
@@ -157,7 +157,7 @@ class qotd(commands.Cog):
                         embed=embed,
                         allowed_mentions=discord.AllowedMentions(roles=True),
                         avatar_url=WebhookSettings.get("Avatar") or None,
-                        username=WebhookSettings.get("Username") or "Birb",
+                        username=WebhookSettings.get("Username") or "Vermont State Management",
                         wait=True,
                     )
 
@@ -222,3 +222,7 @@ class qotd(commands.Cog):
 
 async def setup(client: commands.Bot) -> None:
     await client.add_cog(qotd(client))
+
+async def setup(client: commands.Bot) -> None:
+    await client.add_cog(qotd(client))
+
