@@ -129,13 +129,47 @@ class management(commands.Cog):
         if not guilds:
             if spec == "~":
                 synced = await ctx.bot.tree.sync(guild=ctx.guild)
+                try:
+                    from Cogs.Modules.promotions import SyncServer
+                    await SyncServer(ctx.bot, ctx.guild)
+                except Exception:
+                    pass
             elif spec == "*":
+                try:
+                    ctx.bot.tree.clear_commands(guild=ctx.guild)
+                except Exception:
+                    pass
                 ctx.bot.tree.copy_global_to(guild=ctx.guild)
                 synced = await ctx.bot.tree.sync(guild=ctx.guild)
+                try:
+                    existing = await ctx.bot.tree.fetch_commands(guild=ctx.guild)
+                    seen = set()
+                    from discord import app_commands as ac
+                    for cmd in existing:
+                        if cmd.name in seen:
+                            try:
+                                ac.CommandTree.remove_command(ctx.bot.tree, cmd.name, guild=ctx.guild)
+                            except Exception:
+                                pass
+                        else:
+                            seen.add(cmd.name)
+                    await ctx.bot.tree.sync(guild=ctx.guild)
+                except Exception:
+                    pass
+                try:
+                    from Cogs.Modules.promotions import SyncServer
+                    await SyncServer(ctx.bot, ctx.guild)
+                except Exception:
+                    pass
             elif spec == "^":
                 ctx.bot.tree.clear_commands(guild=ctx.guild)
                 await ctx.bot.tree.sync(guild=ctx.guild)
                 synced = []
+                try:
+                    from Cogs.Modules.promotions import SyncServer
+                    await SyncServer(ctx.bot, ctx.guild)
+                except Exception:
+                    pass
             else:
                 synced = await ctx.bot.tree.sync()
 
@@ -271,3 +305,7 @@ class ManageAccount(discord.ui.View):
 
 async def setup(client: commands.Bot) -> None:
     await client.add_cog(management(client))
+
+async def setup(client: commands.Bot) -> None:
+    await client.add_cog(management(client))
+
