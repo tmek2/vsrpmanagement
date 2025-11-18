@@ -430,7 +430,7 @@ class on_promotion(commands.Cog):
                                 return None
                             Btyes = await resp.read()
                     try:
-                        hook = await channel.create_webhook(name="Birb", avatar=Btyes)
+                        hook = await channel.create_webhook(name="Vermont State Management", avatar=Btyes)
 
                         await self.client.db["Webhooks"].update_one(
                             {"Type": "IP", "Channel": channel.id, "Guild": guild.id},
@@ -463,7 +463,7 @@ class on_promotion(commands.Cog):
                         view=view,
                         allowed_mentions=discord.AllowedMentions(users=True),
                         avatar_url=WS.get("Avatar") or None,
-                        username=WS.get("Username") or "Birb",
+                        username=WS.get("Username") or "Vermont State Management",
                         wait=True,
                     )
                 else:
@@ -472,7 +472,7 @@ class on_promotion(commands.Cog):
                         embed=embed,
                         allowed_mentions=discord.AllowedMentions(users=True),
                         avatar_url=WS.get("Avatar") or None,
-                        username=WS.get("Username") or "Birb",
+                        username=WS.get("Username") or "Vermont State Management",
                         wait=True,
                     )
 
