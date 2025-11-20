@@ -13,7 +13,7 @@ class CustomCommands(discord.ui.Select):
         super().__init__(
             options=[
                 discord.SelectOption(
-                    label="Manage Commands", emoji="<:command1:1438959842688499822>"
+                    label="Manage Commands", emoji="<:command1:1438995857902145607>"
                 ),
             ]
         )
@@ -50,7 +50,7 @@ class CustomCommands(discord.ui.Select):
                 else:
                     Required = "None"
                 embed.add_field(
-                    name=f"<:command1:1438959842688499822> {commands.get('name')}",
+                    name=f"<:command1:1438995857902145607> {commands.get('name')}",
                     value=f">>> <:replytop:1438995988894449684> **Required:** {Required}\n<:replybottom:1438995985408856159> **Created:** <@{commands.get('creator')}> (`{commands.get('creator')}`)",
                     inline=False,
                 )
@@ -351,3 +351,4 @@ async def CustomCommandsEmbed(interaction: discord.Interaction, embed: discord.E
     embed.set_thumbnail(url=interaction.guild.icon)
     embed.description = "> Custom Commands are a way to create your own commands that can be used by people in the server. You can find out more at [the documentation](https://docs.astrobirb.dev/)."
     return embed
+
