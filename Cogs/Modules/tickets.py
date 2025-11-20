@@ -43,6 +43,109 @@ class ButtonHandler(discord.ui.View):
             self.add_item(Button(buttons))
 
 
+class PanelDropdown(discord.ui.Select):
+    def __init__(self, buttons: list[dict]):
+        options = []
+        for b in buttons:
+            label = b.get("label")
+            value = b.get("custom_id")
+            emoji_val = b.get("emoji")
+            emoji_obj = None
+            if emoji_val:
+                try:
+                    pe = discord.PartialEmoji.from_str(emoji_val)
+                    if pe.id:
+                        emoji_obj = pe
+                    else:
+                        emoji_obj = emoji_val
+                except discord.DiscordException:
+                    emoji_obj = emoji_val
+            options.append(
+                discord.SelectOption(label=label, value=value, emoji=emoji_obj)
+            )
+        super().__init__(placeholder="Select a panel", options=options, custom_id="panel_dropdown")
+        self._buttons = buttons
+
+    async def callback(self, interaction: discord.Interaction):
+        custom_id = self.values[0]
+
+        AlreadyOpen = await interaction.client.db["Tickets"].count_documents(
+            {
+                "UserID": interaction.user.id,
+                "GuildID": interaction.guild.id,
+                "closed": None,
+                "panel": {"$exists": True},
+            }
+        )
+        Blacklisted = await interaction.client.db["Ticket Blacklists"].find_one(
+            {"user": interaction.user.id, "guild": interaction.guild.id}
+        )
+        if Blacklisted:
+            return await interaction.response.send_message(
+                content=f"{no} **{interaction.user.display_name}**, you're blacklisted from this servers tickets.",
+                ephemeral=True,
+            )
+        Cli = await interaction.guild.fetch_member(interaction.client.user.id)
+        if not Cli.guild_permissions.manage_channels:
+            return await interaction.response.send_message(
+                content=f"{no} **{interaction.user.display_name}**, I don't have permission to manage channels.",
+                ephemeral=True,
+            )
+        if AlreadyOpen > 5:
+            return await interaction.response.send_message(
+                content=f"{no} **{interaction.user.display_name}**, you already have a max of 5 tickets open! If this is a mistake contact a developer.\n-# If this is a mistake (actually a mistake) press the debug button. (Abusing it'll can lead to a blacklist)",
+                ephemeral=True,
+                view=Debug(),
+            )
+
+        TPanel = None
+        panel = (
+            await interaction.client.db["Panels"].find({"guild": interaction.guild.id}).to_list(length=None)
+        )
+        for p in panel:
+            button = p.get("Button")
+            if button:
+                if button.get("custom_id") == custom_id:
+                    TPanel = p
+                    break
+        if not await AccessControl(interaction, TPanel):
+            return await interaction.response.send_message(
+                content=f"{no} **{interaction.user.display_name}**, you don't have permission to use this panel.",
+                ephemeral=True,
+            )
+
+        Dict = {
+            "_id": "".join(random.choices(string.ascii_letters + string.digits, k=10)),
+            "GuildID": interaction.guild.id,
+            "UserID": interaction.user.id,
+            "opened": interaction.created_at.timestamp(),
+            "closed": None,
+            "claimed": {"claimer": None, "claimedAt": None},
+            "transcript": [],
+            "type": TPanel.get("type") or "single",
+            "panel": TPanel.get("name"),
+            "panel_id": custom_id,
+            "lastMessageSent": datetime.utcnow(),
+        }
+        if TPanel.get("Questions") and len(TPanel.get("Questions")) > 0:
+            return await interaction.response.send_modal(TicketForm(TPanel.get("Questions"), Dict))
+        await interaction.response.defer()
+        if TPanel:
+            t = await interaction.client.db["Tickets"].insert_one(Dict)
+            interaction.client.dispatch("pticket_open", t.inserted_id, TPanel.get("name"))
+            TMSG: discord.Message = await interaction.followup.send(
+                content=f"{loading2} **{interaction.user.display_name}**, hold on while I open the ticket.",
+                ephemeral=True,
+            )
+        else:
+            await interaction.followup.send(
+                content=f"{crisis} **{interaction.user.display_name}**, no matching panel found for the given custom ID.",
+                ephemeral=True,
+                view=Debug(),
+            )
+        await TicketError(interaction, t, TMSG)
+
+
 class TicketForm(discord.ui.Modal):
     def __init__(self, questions: list, data: dict):
         super().__init__(timeout=None, title="Ticket Form")
@@ -392,6 +495,11 @@ class TicketsPub(commands.Cog):
                         "emoji": sub.get("emoji"),
                     }
                 )
+            display_mode = Panel.get("DisplayMode") or (Panel.get("Panel") or {}).get("DisplayMode") or "buttons"
+            if display_mode == "dropdown":
+                view = discord.ui.View(timeout=None)
+                view.add_item(PanelDropdown(buttons))
+            else:
                 view = ButtonHandler()
                 view.add_buttons(buttons)
         else:
