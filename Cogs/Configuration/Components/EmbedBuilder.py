@@ -180,6 +180,7 @@ async def DisplayEmbed(data: dict, user: discord.User = None, replacements: dict
             embed.description,
             embed.author.name if embed.author else None,
             embed.fields,
+            (embed.image.url if embed.image else None),
         ]
     ):
         embed.description = "You need at least one of the following: Title, Description, Author, or Fields."
