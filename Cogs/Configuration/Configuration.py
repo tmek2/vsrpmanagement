@@ -348,7 +348,7 @@ def DefaultEmbed(guild: discord.Guild):
     )
     embed.add_field(
         name="<:help:1438995907348533338> Documentation",
-        value="> The best way to learn how to use **South Florida Management** is through the [**documentation**](https://astrobirb.dev)!",
+        value="> The best way to learn how to use **Vermont State Management** is through the [**documentation**](https://astrobirb.dev)!",
         inline=False,
     )
     embed.set_thumbnail(url=guild.icon)
@@ -533,5 +533,6 @@ class ConfigCog(commands.Cog):
 
 async def setup(client: commands.Bot) -> None:
     await client.add_cog(ConfigCog(client))
+
 
 
