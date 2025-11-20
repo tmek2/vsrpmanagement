@@ -27,7 +27,7 @@ from Cogs.Events.on_ticket import PTicketControl
 from Cogs.Tasks.qotd import *
 from Cogs.Events.on_error import Tree
 from Cogs.Events.modmail import ModmailClosure, Links
-from Cogs.Modules.tickets import ButtonHandler
+from Cogs.Modules.tickets import ButtonHandler, PanelDropdown
 
 sys.dont_write_bytecode = True
 
@@ -326,7 +326,13 @@ class Client(commands.AutoShardedBot):
                 )
 
             if buttons:
-                view_handler.add_buttons(buttons)
+                display_mode = view.get("DisplayMode") or (view.get("Panel") or {}).get("DisplayMode") or "buttons"
+                if display_mode == "dropdown":
+                    handler = discord.ui.View(timeout=None)
+                    handler.add_item(PanelDropdown(buttons))
+                    view_handler = handler
+                else:
+                    view_handler.add_buttons(buttons)
         else:
             single_button = view.get("Button")
             if not single_button:
