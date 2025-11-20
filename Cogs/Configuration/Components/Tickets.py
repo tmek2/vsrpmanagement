@@ -171,6 +171,14 @@ class ModifyPanelSelect(discord.ui.Select):
             )
         else:
             View = MultiPanelCustomisation(interaction.user, SelectedPanel)
+            Styler = await interaction.client.db["Panels"].find_one(
+                {"guild": interaction.guild.id, "type": "multi", "name": SelectedPanel}
+            )
+            mode = (Styler or {}).get("DisplayMode", "buttons")
+            View.DisplayMode.label = f"Display: {'Dropdown' if mode == 'dropdown' else 'Buttons'}"
+            View.DisplayMode.style = (
+                discord.ButtonStyle.green if mode == "dropdown" else discord.ButtonStyle.blurple
+            )
 
         await interaction.response.edit_message(view=View)
 
@@ -643,6 +651,25 @@ class MultiPanelCustomisation(discord.ui.View):
         view = discord.ui.View()
         view.add_item(MultiToSingle(interaction.user, self.name, options))
         await interaction.response.send_message(view=view, ephemeral=True)
+
+    @discord.ui.button(label="Display: Buttons", style=discord.ButtonStyle.blurple)
+    async def DisplayMode(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if interaction.user.id != self.author.id:
+            
+            return await interaction.response.send_message(embed=NotYourPanel(), ephemeral=True)
+        panel = await interaction.client.db["Panels"].find_one(
+            {"guild": interaction.guild.id, "type": "multi", "name": self.name}
+        )
+        mode = (panel or {}).get("DisplayMode", "buttons")
+        new_mode = "dropdown" if mode == "buttons" else "buttons"
+        await interaction.client.db["Panels"].update_one(
+            {"guild": interaction.guild.id, "type": "multi", "name": self.name},
+            {"$set": {"DisplayMode": new_mode}},
+            upsert=True,
+        )
+        button.label = f"Display: {'Dropdown' if new_mode == 'dropdown' else 'Buttons'}"
+        button.style = discord.ButtonStyle.green if new_mode == "dropdown" else discord.ButtonStyle.blurple
+        await interaction.response.edit_message(view=self)
 
     @discord.ui.button(
         label="Finish",
