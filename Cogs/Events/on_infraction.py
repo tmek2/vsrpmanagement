@@ -367,7 +367,7 @@ class on_infractions(commands.Cog):
             if not consreult or consreult.get("infractionalert") is not False:
                 try:
                     await staff.send(
-                        content=f"<:SmallArrow:1140288951861649418>From  **{guild.name}**",
+                        content=f"<:smallarrow:1438996009475768505>From  **{guild.name}**",
                         embed=embed,
                     )
                 except:
@@ -452,7 +452,7 @@ class InfractionIssuer(discord.ui.View):
         label=f"",
         style=discord.ButtonStyle.grey,
         disabled=True,
-        emoji="<:flag:1223062579346145402>",
+        emoji="<:flag:1438995892999815390>",
     )
     async def issuer(self, interaction: discord.Interaction, button: discord.ui.Button):
         pass
@@ -460,3 +460,4 @@ class InfractionIssuer(discord.ui.View):
 
 async def setup(client: commands.Bot) -> None:
     await client.add_cog(on_infractions(client))
+
