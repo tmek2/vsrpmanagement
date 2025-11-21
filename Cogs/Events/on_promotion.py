@@ -506,7 +506,7 @@ class on_promotion(commands.Cog):
         if not consreult or consreult.get("promotionalert") is not False and not edit:
             try:
                 await staff.send(
-                    content=f"<:smallarrow:1438957030378442844>From **@{guild.name}**",
+                    content=f"<:smallarrow:1438996009475768505>From **@{guild.name}**",
                     embed=embed,
                 )
             except:
@@ -529,3 +529,4 @@ class PromotionIssuer(discord.ui.View):
 
 async def setup(client: commands.Bot) -> None:
     await client.add_cog(on_promotion(client))
+
