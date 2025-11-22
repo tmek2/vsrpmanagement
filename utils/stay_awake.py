@@ -19,7 +19,8 @@ class KeepAwake(commands.Cog):
             url = f"http://{host}:{port}/status"
         try:
             async with aiohttp.ClientSession() as session:
-                await session.get(url, timeout=10)
+                async with session.get(url, timeout=10) as resp:
+                    await resp.read()
         except Exception:
             pass
 
