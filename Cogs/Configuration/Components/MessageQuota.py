@@ -14,7 +14,7 @@ class QuotaOptions(discord.ui.Select):
                     label="Quota Amount", emoji=discord.PartialEmoji.from_str("<:amountup:1438995827317276944>")
                 ),
                 discord.SelectOption(
-                    label="Role Quota", emoji=rolequota
+                    label="Role Quota", emoji=discord.PartialEmoji.from_str("<:rolequota:1438996003242905741>")
                 ),
                 discord.SelectOption(
                     label="Ignored Channels", emoji=discord.PartialEmoji.from_str("<:tag:1438996042057256961>")
@@ -601,3 +601,4 @@ async def MessageQuotaEmbed(
         inline=False,
     )
     return embed
+
